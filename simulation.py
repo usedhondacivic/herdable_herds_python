@@ -12,7 +12,7 @@ import math
 import pyglet
 
 HERD_AGENT_SIZE = 2
-SHEPARD_AGENT_SIZE = 2
+SHEPHERD_AGENT_SIZE = 2
 
 PIXELS_PER_METER = 10
 
@@ -45,7 +45,7 @@ class Agent(ABC):
 
     @abstractmethod
     def update(
-        self, shepards: List["HerdAgent"], herd: List["ShepardAgent"], dt: float
+        self, shepherds: List["ShepherdAgent"], herd: List["HerdAgent"], dt: float
     ):
         """
         Update the agent
@@ -68,9 +68,9 @@ class HerdAgent(Agent):
         )
 
     def update(
-        self, shepards: List["HerdAgent"], herd: List["ShepardAgent"], dt: float
+        self, shepherds: List["ShepherdAgent"], herd: List["HerdAgent"], dt: float
     ):
-        for shepard in shepards:
+        for shepherd in shepherds:
             # do something to influence motion
             pass
 
@@ -89,15 +89,15 @@ class HerdAgent(Agent):
         self.shape.y = self.loc[1] * PIXELS_PER_METER
 
 
-class ShepardAgent(Agent):
+class ShepherdAgent(Agent):
     def __init__(self, x, y, heading, vel, batch):
         super().__init__(x, y, heading, vel, batch)
         self.shape = pyglet.shapes.Circle(
-            x, y, SHEPARD_AGENT_SIZE, color=(255, 0, 0), batch=batch
+            x, y, SHEPHERD_AGENT_SIZE, color=(255, 0, 0), batch=batch
         )
 
     def update(
-        self, shepards: List["HerdAgent"], herd: List["ShepardAgent"], dt: float
+        self, shepherds: List["ShepherdAgent"], herd: List["HerdAgent"], dt: float
     ):
         self.loc[0] += math.cos(self.loc[2]) * self.vel * dt
         self.loc[1] += math.sin(self.loc[2]) * self.vel * dt
@@ -124,8 +124,8 @@ class World:
                     self.main_batch,
                 )
             )
-        self.shepards: List[ShepardAgent] = [
-            ShepardAgent(
+        self.shepherds: List[ShepherdAgent] = [
+            ShepherdAgent(
                 random.uniform(0, WINDOW_SIZE_METERS[0]),
                 random.uniform(0, WINDOW_SIZE_METERS[1]),
                 random.uniform(0, 2 * math.pi),
@@ -140,7 +140,7 @@ class World:
         """
         self.window.clear()
 
-        for agent in self.herd + self.shepards:
+        for agent in self.herd + self.shepherds:
             agent.draw()
         self.main_batch.draw()
 
@@ -150,8 +150,8 @@ class World:
         """
         Step the simulation
         """
-        for agent in self.herd + self.shepards:
-            agent.update(self.herd, self.shepards, dt)
+        for agent in self.herd + self.shepherds:
+            agent.update(self.shepherds, self.herd, dt)
 
 
 if __name__ == "__main__":
